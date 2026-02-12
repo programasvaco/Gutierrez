@@ -41,12 +41,6 @@
         .btn-primary:hover {
             background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
-        .badge-activo {
-            background-color: #28a745;
-        }
-        .badge-inactivo {
-            background-color: #dc3545;
-        }
         footer {
             background-color: #f8f9fa;
             padding: 1rem 0;
@@ -64,6 +58,18 @@
         .dropdown-divider {
             border-color: rgba(255,255,255,0.2);
         }
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            color: #667eea;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
     </style>
     
     @stack('styles')
@@ -72,7 +78,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
+            <a class="navbar-brand" href="{{ route('dashboard') }}">
                 <i class="fas fa-box"></i> Sistema de Gestión
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -80,6 +86,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <!-- Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+
                     <!-- Catálogos -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{ request()->routeIs('productos.*') || request()->routeIs('almacenes.*') || request()->routeIs('proveedores.*') ? 'active' : '' }}" href="#" id="catalogosDropdown" role="button" data-bs-toggle="dropdown">
@@ -127,6 +140,30 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('kardex.index') }}"><i class="fas fa-clipboard-list"></i> Kardex</a></li>
                             <li><a class="dropdown-item" href="{{ route('kardex.reporte') }}"><i class="fas fa-chart-line"></i> Movimientos General</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Usuario -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <span class="user-avatar">{{ Auth::user()->initials }}</span>
+                            <span class="ms-2">{{ Auth::user()->name }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                            @if(Auth::user()->isAdmin())
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="fas fa-users"></i> Gestión de Usuarios</a></li>
+                            @endif
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
                         </ul>
                     </li>
                 </ul>
