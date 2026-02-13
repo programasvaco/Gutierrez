@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ProductoImportController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\CompraController;
@@ -35,6 +36,13 @@ Route::middleware(['auth'])->group(function () {
     
     // Catálogos
     Route::resource('productos', ProductoController::class);
+    
+    // Importación de Productos
+    Route::get('productos-import', [ProductoImportController::class, 'showImportForm'])->name('productos.import');
+    Route::get('productos-import/template', [ProductoImportController::class, 'downloadTemplate'])->name('productos.import.template');
+    Route::post('productos-import/preview', [ProductoImportController::class, 'preview'])->name('productos.import.preview');
+    Route::post('productos-import/process', [ProductoImportController::class, 'import'])->name('productos.import.process');
+    
     Route::resource('almacenes', AlmacenController::class);
     Route::resource('proveedores', ProveedorController::class);
     
