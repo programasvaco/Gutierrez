@@ -9,6 +9,7 @@ use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\TraspasoController;
+use App\Http\Controllers\TraspasoPrintController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\CxPagarController;
@@ -55,6 +56,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('traspasos/{traspaso}/poner-en-transito', [TraspasoController::class, 'ponerEnTransito'])->name('traspasos.poner-en-transito');
     Route::post('traspasos/{traspaso}/recibir', [TraspasoController::class, 'recibir'])->name('traspasos.recibir');
     Route::post('traspasos/{traspaso}/cancelar', [TraspasoController::class, 'cancelar'])->name('traspasos.cancelar');
+    
+    // Impresión de Traspasos
+    Route::get('traspasos/{traspaso}/print', [TraspasoPrintController::class, 'print'])->name('traspasos.print');
+    Route::get('traspasos/{traspaso}/print-remision', [TraspasoPrintController::class, 'printRemision'])->name('traspasos.print-remision');
+    Route::get('traspasos/{traspaso}/print-orden-salida', [TraspasoPrintController::class, 'printOrdenSalida'])->name('traspasos.print-orden-salida');
+    Route::get('traspasos/{traspaso}/print-orden-entrada', [TraspasoPrintController::class, 'printOrdenEntrada'])->name('traspasos.print-orden-entrada');
     
     // Consultas - Inventarios
     Route::get('inventarios', [InventarioController::class, 'index'])->name('inventarios.index');

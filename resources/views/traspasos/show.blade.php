@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detalles del Traspaso')
+@section('title', 'Detalle del Traspaso')
 
 @section('content')
 <div class="row mb-4">
@@ -8,87 +8,48 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('traspasos.index') }}">Traspasos</a></li>
-                <li class="breadcrumb-item active">Detalles</li>
+                <li class="breadcrumb-item active">{{ $traspaso->folio }}</li>
             </ol>
         </nav>
     </div>
 </div>
 
 <div class="row">
-    <!-- Información General -->
-    <div class="col-md-12 mb-4">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h5 class="mb-0"><i class="fas fa-exchange-alt"></i> Traspaso {{ $traspaso->folio }}</h5>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <span class="badge {{ $traspaso->status_badge }} fs-6">
-                            <i class="fas {{ $traspaso->status_icon }}"></i> {{ ucfirst($traspaso->status) }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="info-item">
-                            <label class="text-muted"><i class="fas fa-calendar"></i> Fecha:</label>
-                            <p class="fw-bold">{{ $traspaso->fecha->format('d/m/Y') }}</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="info-item">
-                            <label class="text-muted"><i class="fas fa-clock"></i> Hora:</label>
-                            <p class="fw-bold">{{ date('H:i:s', strtotime($traspaso->hora)) }}</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="info-item">
-                            <label class="text-muted"><i class="fas fa-warehouse text-danger"></i> Origen:</label>
-                            <p class="fw-bold">{{ $traspaso->almacenOrigen->nombre }}</p>
-                            <small class="text-muted">{{ $traspaso->almacenOrigen->ciudad }}</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="info-item">
-                            <label class="text-muted"><i class="fas fa-warehouse text-success"></i> Destino:</label>
-                            <p class="fw-bold">{{ $traspaso->almacenDestino->nombre }}</p>
-                            <small class="text-muted">{{ $traspaso->almacenDestino->ciudad }}</small>
-                        </div>
-                    </div>
-                </div>
-
-                @if($traspaso->observaciones)
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <div class="alert alert-info">
-                            <strong><i class="fas fa-sticky-note"></i> Observaciones:</strong><br>
-                            {{ $traspaso->observaciones }}
-                        </div>
-                    </div>
-                </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <!-- Productos -->
-    <div class="col-md-12 mb-4">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-box"></i> Productos</h5>
+                <h5 class="mb-0">
+                    <i class="fas fa-exchange-alt"></i> Traspaso {{ $traspaso->folio }}
+                    <span class="badge {{ $traspaso->status_badge }} float-end">
+                        <i class="{{ $traspaso->status_icon }}"></i> {{ ucfirst($traspaso->status) }}
+                    </span>
+                </h5>
             </div>
             <div class="card-body">
+                <!-- Información General -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Información General</h6>
+                        <p><strong>Fecha:</strong> {{ $traspaso->fecha->format('d/m/Y') }}</p>
+                        <p><strong>Hora:</strong> {{ date('H:i:s', strtotime($traspaso->hora)) }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Almacenes</h6>
+                        <p><strong>Origen:</strong> {{ $traspaso->almacenOrigen->nombre }}</p>
+                        <p><strong>Destino:</strong> {{ $traspaso->almacenDestino->nombre }}</p>
+                    </div>
+                </div>
+
+                <!-- Productos -->
+                <h6 class="text-muted mb-3">Productos</h6>
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-sm">
                         <thead class="table-light">
                             <tr>
                                 <th>Código</th>
                                 <th>Producto</th>
                                 <th class="text-end">Cantidad</th>
-                                <th class="text-end">Costo Unit.</th>
+                                <th class="text-end">Costo</th>
                                 <th class="text-end">Total</th>
                             </tr>
                         </thead>
@@ -99,159 +60,180 @@
                                 <td>{{ $detalle->producto->descripcion }}</td>
                                 <td class="text-end">{{ number_format($detalle->cantidad, 2) }}</td>
                                 <td class="text-end">${{ number_format($detalle->costo, 2) }}</td>
-                                <td class="text-end"><strong>${{ number_format($detalle->cantidad * $detalle->costo, 2) }}</strong></td>
+                                <td class="text-end">${{ number_format($detalle->cantidad * $detalle->costo, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
-                                <th colspan="2">TOTALES:</th>
-                                <th class="text-end">{{ number_format($traspaso->detalles->sum('cantidad'), 2) }}</th>
-                                <th></th>
-                                <th class="text-end"><strong>${{ number_format($traspaso->detalles->sum(function($d) { return $d->cantidad * $d->costo; }), 2) }}</strong></th>
+                                <th colspan="4" class="text-end">TOTAL:</th>
+                                <th class="text-end">
+                                    ${{ number_format($traspaso->detalles->sum(function($d) { return $d->cantidad * $d->costo; }), 2) }}
+                                </th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
+
+                <!-- Observaciones -->
+                @if($traspaso->observaciones)
+                <div class="mt-3">
+                    <h6 class="text-muted">Observaciones</h6>
+                    <p class="border p-2 bg-light">{{ $traspaso->observaciones }}</p>
+                </div>
+                @endif
             </div>
         </div>
     </div>
 
-    <!-- Timeline de Estados -->
-    <div class="col-md-6 mb-4">
-        <div class="card">
+    <div class="col-md-4">
+        <!-- Timeline -->
+        <div class="card mb-3">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-history"></i> Historial de Estados</h5>
+                <h6 class="mb-0"><i class="fas fa-history"></i> Timeline</h6>
             </div>
             <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <i class="fas fa-check-circle text-success"></i> <strong>Creado</strong>
-                        <br><small class="text-muted">{{ $traspaso->created_at->format('d/m/Y H:i:s') }}</small>
-                    </li>
-                    
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <i class="fas fa-file-alt text-secondary"></i>
+                        <strong>Creado</strong><br>
+                        <small>{{ $traspaso->created_at->format('d/m/Y H:i') }}</small>
+                    </div>
+
                     @if($traspaso->fecha_transito)
-                    <li class="list-group-item">
-                        <i class="fas fa-truck text-warning"></i> <strong>En Tránsito</strong>
-                        <br><small class="text-muted">{{ $traspaso->fecha_transito->format('d/m/Y H:i:s') }}</small>
-                    </li>
+                    <div class="timeline-item">
+                        <i class="fas fa-truck text-warning"></i>
+                        <strong>En Tránsito</strong><br>
+                        <small>{{ $traspaso->fecha_transito->format('d/m/Y H:i') }}</small>
+                    </div>
                     @endif
 
                     @if($traspaso->fecha_recepcion)
-                    <li class="list-group-item">
-                        <i class="fas fa-check-circle text-success"></i> <strong>Recibido</strong>
-                        <br><small class="text-muted">{{ $traspaso->fecha_recepcion->format('d/m/Y H:i:s') }}</small>
-                    </li>
+                    <div class="timeline-item">
+                        <i class="fas fa-check-circle text-success"></i>
+                        <strong>Recibido</strong><br>
+                        <small>{{ $traspaso->fecha_recepcion->format('d/m/Y H:i') }}</small>
+                    </div>
                     @endif
 
                     @if($traspaso->fecha_cancelacion)
-                    <li class="list-group-item">
-                        <i class="fas fa-times-circle text-danger"></i> <strong>Cancelado</strong>
-                        <br><small class="text-muted">{{ $traspaso->fecha_cancelacion->format('d/m/Y H:i:s') }}</small>
-                    </li>
+                    <div class="timeline-item">
+                        <i class="fas fa-times-circle text-danger"></i>
+                        <strong>Cancelado</strong><br>
+                        <small>{{ $traspaso->fecha_cancelacion->format('d/m/Y H:i') }}</small>
+                    </div>
                     @endif
-                </ul>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Acciones Disponibles -->
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-tasks"></i> Acciones Disponibles</h5>
+        <!-- Botones de Impresión -->
+        <div class="card mb-3 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0"><i class="fas fa-print"></i> Imprimir Documentos</h6>
             </div>
             <div class="card-body">
-                @if($traspaso->puedePonerseEnTransito())
-                    <form action="{{ route('traspasos.poner-en-transito', $traspaso) }}" method="POST" class="mb-2">
-                        @csrf
-                        <button type="submit" class="btn btn-warning w-100" onclick="return confirm('¿Confirma poner este traspaso en tránsito?\n\nEsto realizará las salidas del almacén origen.')">
-                            <i class="fas fa-truck"></i> Poner en Tránsito
-                        </button>
-                    </form>
-                    <small class="text-muted d-block mb-3">
-                        <i class="fas fa-info-circle"></i> Al poner en tránsito se descontará del inventario del almacén origen.
-                    </small>
-                @endif
+                <div class="d-grid gap-2">
+                    <!-- Traspaso Completo -->
+                    <a href="{{ route('traspasos.print', $traspaso) }}" class="btn btn-primary btn-sm" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Traspaso Completo
+                    </a>
 
-                @if($traspaso->puedeRecibirse())
-                    <form action="{{ route('traspasos.recibir', $traspaso) }}" method="POST" class="mb-2">
-                        @csrf
-                        <button type="submit" class="btn btn-success w-100" onclick="return confirm('¿Confirma la recepción de este traspaso?\n\nEsto incrementará el inventario del almacén destino.')">
-                            <i class="fas fa-check"></i> Recibir Traspaso
-                        </button>
-                    </form>
-                    <small class="text-muted d-block mb-3">
-                        <i class="fas fa-info-circle"></i> Al recibir se incrementará el inventario del almacén destino.
-                    </small>
-                @endif
+                    <!-- Remisión -->
+                    <a href="{{ route('traspasos.print-remision', $traspaso) }}" class="btn btn-info btn-sm" target="_blank">
+                        <i class="fas fa-file-invoice"></i> Remisión de Traslado
+                    </a>
 
-                @if($traspaso->puedeCancelarse())
-                    <form action="{{ route('traspasos.cancelar', $traspaso) }}" method="POST" class="mb-2">
-                        @csrf
-                        <button type="submit" class="btn btn-danger w-100" onclick="return confirm('¿Está seguro de cancelar este traspaso?\n\nEsta acción no se puede deshacer.')">
-                            <i class="fas fa-times"></i> Cancelar Traspaso
-                        </button>
-                    </form>
-                    <small class="text-muted d-block mb-3">
-                        <i class="fas fa-exclamation-triangle"></i> Solo se pueden cancelar traspasos en estado "creado".
-                    </small>
-                @endif
+                    <!-- Orden de Salida -->
+                    <a href="{{ route('traspasos.print-orden-salida', $traspaso) }}" class="btn btn-danger btn-sm" target="_blank">
+                        <i class="fas fa-sign-out-alt"></i> Orden de Salida
+                    </a>
 
-                @if($traspaso->status == 'recibido')
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i> Este traspaso ha sido completado exitosamente.
-                    </div>
-                @endif
+                    <!-- Orden de Entrada -->
+                    <a href="{{ route('traspasos.print-orden-entrada', $traspaso) }}" class="btn btn-success btn-sm" target="_blank">
+                        <i class="fas fa-sign-in-alt"></i> Orden de Entrada
+                    </a>
+                </div>
 
-                @if($traspaso->status == 'cancelado')
-                    <div class="alert alert-danger">
-                        <i class="fas fa-times-circle"></i> Este traspaso ha sido cancelado.
-                    </div>
-                @endif
+                <hr>
 
-                @if($traspaso->status == 'en transito')
-                    <div class="alert alert-warning">
-                        <i class="fas fa-truck"></i> Este traspaso está en tránsito. No se puede cancelar.
-                    </div>
-                @endif
+                <p class="text-muted small mb-0">
+                    <i class="fas fa-info-circle"></i> Los documentos se abrirán en una nueva ventana
+                </p>
+            </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-cog"></i> Acciones</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    @if($traspaso->puedeCancelarse())
+                        <form action="{{ route('traspasos.cancelar', $traspaso) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-danger w-100" onclick="return confirm('¿Estás seguro de cancelar este traspaso?')">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </form>
+                    @endif
+
+                    @if($traspaso->puedePonerseEnTransito())
+                        <form action="{{ route('traspasos.poner-en-transito', $traspaso) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-warning w-100" onclick="return confirm('¿Confirmas poner en tránsito este traspaso?')">
+                                <i class="fas fa-truck"></i> Poner en Tránsito
+                            </button>
+                        </form>
+                    @endif
+
+                    @if($traspaso->puedeRecibirse())
+                        <form action="{{ route('traspasos.recibir', $traspaso) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-success w-100" onclick="return confirm('¿Confirmas la recepción de este traspaso?')">
+                                <i class="fas fa-check"></i> Recibir
+                            </button>
+                        </form>
+                    @endif
+
+                    <a href="{{ route('traspasos.index') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<hr>
-
-<div class="d-flex justify-content-between">
-    <a href="{{ route('traspasos.index') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Volver al Listado
-    </a>
-    
-    @if(in_array($traspaso->status, ['creado', 'cancelado']))
-    <form action="{{ route('traspasos.destroy', $traspaso) }}" method="POST" style="display: inline;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este traspaso?')">
-            <i class="fas fa-trash"></i> Eliminar
-        </button>
-    </form>
-    @endif
 </div>
 @endsection
 
 @push('styles')
 <style>
-    .info-item {
-        margin-bottom: 0.5rem;
+    .timeline {
+        position: relative;
+        padding-left: 30px;
     }
-    .info-item label {
-        display: block;
-        font-size: 0.85rem;
-        margin-bottom: 0.25rem;
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+        border-left: 2px solid #dee2e6;
+        padding-left: 20px;
     }
-    .info-item p {
-        margin-bottom: 0;
-        font-size: 1rem;
+    .timeline-item:last-child {
+        border-left: none;
+        padding-bottom: 0;
+    }
+    .timeline-item i {
+        position: absolute;
+        left: -9px;
+        background: white;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
     }
 </style>
 @endpush
