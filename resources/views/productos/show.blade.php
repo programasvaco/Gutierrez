@@ -96,6 +96,22 @@
                             </div>
                         </div>
 
+                        {{-- precios --}}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <label class="text-muted"><i class="fas fa-dollar-sign"></i> Precio venta:</label>
+                                    <p class="fw-bold">{{ $producto->precio_venta_formateado }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <label class="text-muted"><i class="fas fa-arrow-down-wide-short"></i> Precio mínimo:</label>
+                                    <p class="fw-bold">{{ $producto->precio_minimo_formateado }}</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <div class="info-item">

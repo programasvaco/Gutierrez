@@ -30,6 +30,15 @@ class ProductoController extends Controller
             $query->where('status', $request->status);
         }
 
+        // Filtro por rango de precios
+        if ($request->has('precio_min') && $request->precio_min != '') {
+            $query->where('precio_venta', '>=', $request->precio_min);
+        }
+
+        if ($request->has('precio_max') && $request->precio_max != '') {
+            $query->where('precio_venta', '<=', $request->precio_max);
+        }
+
         $productos = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('productos.index', compact('productos'));
@@ -57,9 +66,18 @@ class ProductoController extends Controller
             'contenido' => 'required|numeric|min:0',
             'stock_min' => 'required|integer|min:0',
             'stock_max' => 'required|integer|min:0',
+            'precio_venta' => 'required|numeric|min:0',
+            'precio_minimo' => 'required|numeric|min:0',
             'status' => 'required|in:activo,inactivo',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
+
+        // Validación adicional: precio_venta no puede ser menor a precio_minimo
+        if ($validated['precio_venta'] < $validated['precio_minimo']) {
+            return back()
+                ->withInput()
+                ->withErrors(['precio_venta' => 'El precio de venta no puede ser menor al precio mínimo.']);
+        }
 
         // Manejar la imagen
         if ($request->hasFile('imagen')) {
@@ -105,15 +123,24 @@ class ProductoController extends Controller
             'contenido' => 'required|numeric|min:0',
             'stock_min' => 'required|integer|min:0',
             'stock_max' => 'required|integer|min:0',
+            'precio_venta' => 'required|numeric|min:0',
+            'precio_minimo' => 'required|numeric|min:0',
             'status' => 'required|in:activo,inactivo',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
+
+        // Validación adicional: precio_venta no puede ser menor a precio_minimo
+        if ($validated['precio_venta'] < $validated['precio_minimo']) {
+            return back()
+                ->withInput()
+                ->withErrors(['precio_venta' => 'El precio de venta no puede ser menor al precio mínimo.']);
+        }
 
         // Manejar la imagen
         if ($request->hasFile('imagen')) {
             // Eliminar imagen anterior si existe
             if ($producto->imagen) {
-                Storage::delete('public/productos/' . $producto->imagen);
+                Storage::disk('public')->delete('productos/' . $producto->imagen);
             }
 
             $imagen = $request->file('imagen');
@@ -135,7 +162,7 @@ class ProductoController extends Controller
     {
         // Eliminar imagen si existe
         if ($producto->imagen) {
-            Storage::delete('public/productos/' . $producto->imagen);
+            Storage::disk('public')->delete('productos/' . $producto->imagen);
         }
 
         $producto->delete();

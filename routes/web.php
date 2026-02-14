@@ -13,6 +13,7 @@ use App\Http\Controllers\TraspasoPrintController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\CxPagarController;
+use App\Http\Controllers\InventarioImportController;
 
 // Rutas públicas
 Route::get('/', function () {
@@ -67,7 +68,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inventarios', [InventarioController::class, 'index'])->name('inventarios.index');
     Route::get('inventarios/stock-bajo', [InventarioController::class, 'stockBajo'])->name('inventarios.stock-bajo');
     Route::get('inventarios/consolidado', [InventarioController::class, 'consolidado'])->name('inventarios.consolidado');
-    
+    // Importación de Inventario
+    Route::get('inventarios-import', [InventarioImportController::class, 'showImportForm'])->name('inventarios.import');
+    Route::get('inventarios-import/template', [InventarioImportController::class, 'downloadTemplate'])->name('inventarios.import.template');
+    Route::post('inventarios-import/preview', [InventarioImportController::class, 'preview'])->name('inventarios.import.preview');
+    Route::post('inventarios-import/process', [InventarioImportController::class, 'import'])->name('inventarios.import.process');
     // Consultas - Cuentas por Pagar
     Route::get('cxpagar', [CxPagarController::class, 'index'])->name('cxpagar.index');
     Route::get('cxpagar/vencidas', [CxPagarController::class, 'vencidas'])->name('cxpagar.vencidas');

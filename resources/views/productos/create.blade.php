@@ -97,6 +97,24 @@
                             @enderror
                         </div>
 
+                        <!-- Precio venta -->
+                        <div class="col-md-6 mb-3">
+                            <label for="precio_venta" class="form-label">Precio venta <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" class="form-control @error('precio_venta') is-invalid @enderror" id="precio_venta" name="precio_venta" value="{{ old('precio_venta', 1) }}" required>
+                            @error('precio_venta')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Precio mínimo -->
+                        <div class="col-md-6 mb-3">
+                            <label for="precio_minimo" class="form-label">Precio mínimo <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" class="form-control @error('precio_minimo') is-invalid @enderror" id="precio_minimo" name="precio_minimo" value="{{ old('precio_minimo', 1) }}" required>
+                            @error('precio_minimo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Estado -->
                         <div class="col-md-6 mb-3">
                             <label for="status" class="form-label">Estado <span class="text-danger">*</span></label>

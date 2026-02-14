@@ -60,6 +60,7 @@
                             <th>Código</th>
                             <th>Descripción</th>
                             <th>Unidad</th>
+                            <th class="text-end">Precio</th>
                             <th class="text-end">Stock Min</th>
                             <th class="text-end">Stock Max</th>
                             <th class="text-center">Estado</th>
@@ -77,6 +78,7 @@
                                 <strong>{{ $producto->descripcion }}</strong>
                             </td>
                             <td>{{ $producto->unidad }}</td>
+                            <td class="text-end">{{ number_format($producto->precio_venta, 2) }}</td>
                             <td class="text-end">{{ number_format($producto->stock_min, 2) }}</td>
                             <td class="text-end">{{ number_format($producto->stock_max, 2) }}</td>
                             <td class="text-center">

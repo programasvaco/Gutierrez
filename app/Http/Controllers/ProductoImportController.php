@@ -50,7 +50,7 @@ class ProductoImportController extends Controller
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            // Encabezados
+            // Encabezados - AGREGADOS precioVenta y precioMinimo
             $headers = [
                 'A1' => 'codigo',
                 'B1' => 'codigoEmpaque',
@@ -60,6 +60,8 @@ class ProductoImportController extends Controller
                 'F1' => 'contenido',
                 'G1' => 'stockMin',
                 'H1' => 'stockMax',
+                'I1' => 'precioVenta',
+                'J1' => 'precioMinimo',
             ];
 
             foreach ($headers as $cell => $value) {
@@ -70,7 +72,7 @@ class ProductoImportController extends Controller
                     ->getStartColor()->setARGB('FFE0E0E0');
             }
 
-            // Datos de ejemplo
+            // Datos de ejemplo - AGREGADOS precios
             $sheet->setCellValue('A2', 'PROD001');
             $sheet->setCellValue('B2', 'EMP001');
             $sheet->setCellValue('C2', 'Tornillo 1/2" x 2"');
@@ -79,6 +81,8 @@ class ProductoImportController extends Controller
             $sheet->setCellValue('F2', '100');
             $sheet->setCellValue('G2', '50');
             $sheet->setCellValue('H2', '500');
+            $sheet->setCellValue('I2', '150.50');
+            $sheet->setCellValue('J2', '120.00');
 
             $sheet->setCellValue('A3', 'PROD002');
             $sheet->setCellValue('B3', 'EMP002');
@@ -88,13 +92,15 @@ class ProductoImportController extends Controller
             $sheet->setCellValue('F3', '50');
             $sheet->setCellValue('G3', '30');
             $sheet->setCellValue('H3', '300');
+            $sheet->setCellValue('I3', '75.25');
+            $sheet->setCellValue('J3', '60.00');
 
             // Ajustar ancho de columnas
-            foreach (range('A', 'H') as $col) {
+            foreach (range('A', 'J') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
-            // Agregar hoja de instrucciones
+            // Agregar hoja de instrucciones - ACTUALIZADA
             $instructionsSheet = $spreadsheet->createSheet();
             $instructionsSheet->setTitle('Instrucciones');
             $instructionsSheet->setCellValue('A1', 'INSTRUCCIONES PARA IMPORTAR PRODUCTOS');
@@ -106,16 +112,19 @@ class ProductoImportController extends Controller
                 'A5' => '   - codigoEmpaque: Código del empaque (opcional, máximo 50 caracteres)',
                 'A6' => '   - descripcion: Descripción del producto (obligatorio, máximo 255 caracteres)',
                 'A7' => '   - unidad: Unidad de medida (obligatorio, ej: Pieza, Kg, Litro)',
-                'A8' => '   - unidadCompra: Unidad de compra (opcional, ej: Caja, Bolsa)',
-                'A9' => '   - contenido: Contenido numérico (opcional, ej: 100)',
-                'A10' => '   - stockMin: Stock mínimo (obligatorio, número)',
-                'A11' => '   - stockMax: Stock máximo (obligatorio, número)',
-                'A13' => '2. No elimine la fila de encabezados',
-                'A14' => '3. Los campos obligatorios no pueden estar vacíos',
-                'A15' => '4. El código debe ser único (no puede estar duplicado)',
-                'A16' => '5. Los valores numéricos deben ser números válidos',
-                'A17' => '6. Se recomienda no importar más de 1000 productos a la vez',
-                'A19' => '7. Después de importar, revise el resultado y corrija los errores si los hay',
+                'A8' => '   - unidadCompra: Unidad de compra (obligatorio, ej: Caja, Bolsa)',
+                'A9' => '   - contenido: Contenido numérico (obligatorio, ej: 100)',
+                'A10' => '   - stockMin: Stock mínimo (obligatorio, número entero)',
+                'A11' => '   - stockMax: Stock máximo (obligatorio, número entero)',
+                'A12' => '   - precioVenta: Precio de venta (obligatorio, número decimal)',
+                'A13' => '   - precioMinimo: Precio mínimo (obligatorio, número decimal)',
+                'A15' => '2. No elimine la fila de encabezados',
+                'A16' => '3. Todos los campos marcados como obligatorios no pueden estar vacíos',
+                'A17' => '4. El código debe ser único (no puede estar duplicado)',
+                'A18' => '5. Los valores numéricos deben ser números válidos',
+                'A19' => '6. El precio de venta debe ser mayor o igual al precio mínimo',
+                'A20' => '7. Stock máximo debe ser mayor o igual al stock mínimo',
+                'A21' => '8. Se recomienda no importar más de 1000 productos a la vez',
             ];
 
             foreach ($instructions as $cell => $text) {
@@ -173,7 +182,7 @@ class ProductoImportController extends Controller
             }
 
             $headers = $data[0];
-            $expectedHeaders = ['codigo', 'codigoEmpaque', 'descripcion', 'unidad', 'unidadCompra', 'contenido', 'stockMin', 'stockMax'];
+            $expectedHeaders = ['codigo', 'codigoEmpaque', 'descripcion', 'unidad', 'unidadCompra', 'contenido', 'stockMin', 'stockMax', 'precioVenta', 'precioMinimo'];
 
             // Validar encabezados
             if ($headers !== $expectedHeaders) {
@@ -204,6 +213,8 @@ class ProductoImportController extends Controller
                     'contenido' => $row[5] ?? '',
                     'stockMin' => $row[6] ?? '',
                     'stockMax' => $row[7] ?? '',
+                    'precioVenta' => $row[8] ?? '',
+                    'precioMinimo' => $row[9] ?? '',
                     'row_number' => $rowNumber,
                     'status' => 'ok',
                     'errors' => [],
@@ -214,9 +225,12 @@ class ProductoImportController extends Controller
                     'codigo' => 'required|string|max:50',
                     'descripcion' => 'required|string|max:255',
                     'unidad' => 'required|string|max:50',
-                    'stockMin' => 'required|numeric|min:0',
-                    'stockMax' => 'required|numeric|min:0',
-                    'contenido' => 'nullable|numeric|min:0',
+                    'unidadCompra' => 'required|string|max:50',
+                    'contenido' => 'required|numeric|min:0',
+                    'stockMin' => 'required|integer|min:0',
+                    'stockMax' => 'required|integer|min:0',
+                    'precioVenta' => 'required|numeric|min:0',
+                    'precioMinimo' => 'required|numeric|min:0',
                 ]);
 
                 if ($validator->fails()) {
@@ -232,12 +246,24 @@ class ProductoImportController extends Controller
                     $warnings[] = "Fila $rowNumber: El código {$rowData['codigo']} ya existe";
                 }
 
-                // Verificar stockMax >= stockMin
-                if (!empty($rowData['stockMin']) && !empty($rowData['stockMax'])) {
-                    if ($rowData['stockMax'] < $rowData['stockMin']) {
-                        $rowData['status'] = 'error';
-                        $rowData['errors'][] = 'El stock máximo debe ser mayor o igual al stock mínimo';
-                        $errors[] = "Fila $rowNumber: Stock máximo menor que stock mínimo";
+                // Validaciones adicionales
+                if ($rowData['status'] !== 'error') {
+                    // Verificar stockMax >= stockMin
+                    if (is_numeric($rowData['stockMin']) && is_numeric($rowData['stockMax'])) {
+                        if ($rowData['stockMax'] < $rowData['stockMin']) {
+                            $rowData['status'] = 'error';
+                            $rowData['errors'][] = 'El stock máximo debe ser mayor o igual al stock mínimo';
+                            $errors[] = "Fila $rowNumber: Stock máximo menor que stock mínimo";
+                        }
+                    }
+
+                    // Verificar precioVenta >= precioMinimo
+                    if (is_numeric($rowData['precioVenta']) && is_numeric($rowData['precioMinimo'])) {
+                        if ($rowData['precioVenta'] < $rowData['precioMinimo']) {
+                            $rowData['status'] = 'error';
+                            $rowData['errors'][] = 'El precio de venta debe ser mayor o igual al precio mínimo';
+                            $errors[] = "Fila $rowNumber: Precio de venta menor que precio mínimo";
+                        }
                     }
                 }
 
@@ -287,13 +313,15 @@ class ProductoImportController extends Controller
 
                 $data = [
                     'codigo' => $row['codigo'],
-                    'codigoEmpaque' => $row['codigoEmpaque'],
+                    'codigo_empaque' => $row['codigoEmpaque'],
                     'descripcion' => $row['descripcion'],
                     'unidad' => $row['unidad'],
                     'unidad_compra' => $row['unidadCompra'],
                     'contenido' => $row['contenido'] ?: 0,
                     'stock_min' => $row['stockMin'],
                     'stock_max' => $row['stockMax'],
+                    'precio_venta' => $row['precioVenta'] ?: 0,
+                    'precio_minimo' => $row['precioMinimo'] ?: 0,
                     'status' => 'activo',
                 ];
 

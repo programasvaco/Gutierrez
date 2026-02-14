@@ -139,6 +139,16 @@
                             <td>Stock máximo (número)</td>
                             <td><span class="badge bg-danger">Sí</span></td>
                         </tr>
+                        <tr>
+                            <td><code>precioVenta</code></td>
+                            <td>Precio venta (número)</td>
+                            <td><span class="badge bg-danger">Sí</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>precioMinimo</code></td>
+                            <td>Precio mínimo (número)</td>
+                            <td><span class="badge bg-danger">Sí</span></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

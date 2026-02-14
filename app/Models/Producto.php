@@ -20,6 +20,8 @@ class Producto extends Model
         'contenido',
         'stock_min',
         'stock_max',
+        'precio_venta',
+        'precio_minimo',
         'status',
         'imagen'
     ];
@@ -28,6 +30,8 @@ class Producto extends Model
         'contenido' => 'decimal:2',
         'stock_min' => 'integer',
         'stock_max' => 'integer',
+        'precio_venta' => 'decimal:2',
+        'precio_minimo' => 'decimal:2',
     ];
 
     /**
@@ -55,5 +59,40 @@ class Producto extends Model
             return asset('storage/productos/' . $this->imagen);
         }
         return asset('images/no-image.png');
+    }
+
+        /**
+     * Verificar si el precio de venta es menor al precio mínimo
+     */
+    public function getPrecioVentaEsMenorAttribute()
+    {
+        return $this->precio_venta < $this->precio_minimo;
+    }
+
+    /**
+     * Calcular el margen de ganancia
+     */
+    public function getMargenGananciaAttribute()
+    {
+        if ($this->precio_minimo > 0) {
+            return (($this->precio_venta - $this->precio_minimo) / $this->precio_minimo) * 100;
+        }
+        return 0;
+    }
+
+    /**
+     * Formatear precio de venta como moneda
+     */
+    public function getPrecioVentaFormateadoAttribute()
+    {
+        return '$ ' . number_format($this->precio_venta, 2, '.', ',');
+    }
+
+    /**
+     * Formatear precio mínimo como moneda
+     */
+    public function getPrecioMinimoFormateadoAttribute()
+    {
+        return '$ ' . number_format($this->precio_minimo, 2, '.', ',');
     }
 }
