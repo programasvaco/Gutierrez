@@ -25,12 +25,12 @@ class ProductoImportController extends Controller
         $filename = 'plantilla_productos.xlsx';
         $filepath = storage_path('app/templates/' . $filename);
 
-        // Verificar si existe la plantilla
+        // Eliminar la plantilla existente si tiene una versión anterior
         if (file_exists($filepath)) {
-            return response()->download($filepath);
+            unlink($filepath); // Eliminar el archivo antiguo
         }
-
-        // Si no existe, generarla
+        
+        // Generar la nueva plantilla
         $this->generateTemplate();
         
         if (file_exists($filepath)) {
