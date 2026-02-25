@@ -36,8 +36,8 @@
 
                         <!-- Razón Social -->
                         <div class="col-md-6 mb-3">
-                            <label for="razon_social" class="form-label">Razón Social <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('razon_social') is-invalid @enderror" id="razon_social" name="razon_social" value="{{ old('razon_social') }}" required>
+                            <label for="razon_social" class="form-label">Razón Social </label>
+                            <input type="text" class="form-control @error('razon_social') is-invalid @enderror" id="razon_social" name="razon_social" value="{{ old('razon_social') }}">
                             @error('razon_social')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -45,8 +45,8 @@
 
                         <!-- RFC -->
                         <div class="col-md-6 mb-3">
-                            <label for="rfc" class="form-label">RFC <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('rfc') is-invalid @enderror" id="rfc" name="rfc" value="{{ old('rfc') }}" maxlength="13" placeholder="13 caracteres" required style="text-transform: uppercase;">
+                            <label for="rfc" class="form-label">RFC </label>
+                            <input type="text" class="form-control @error('rfc') is-invalid @enderror" id="rfc" name="rfc" value="{{ old('rfc') }}" maxlength="13" placeholder="13 caracteres" style="text-transform: uppercase;">
                             @error('rfc')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -55,8 +55,8 @@
 
                         <!-- Ciudad -->
                         <div class="col-md-6 mb-3">
-                            <label for="ciudad" class="form-label">Ciudad <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('ciudad') is-invalid @enderror" id="ciudad" name="ciudad" value="{{ old('ciudad') }}" required>
+                            <label for="ciudad" class="form-label">Ciudad </label>
+                            <input type="text" class="form-control @error('ciudad') is-invalid @enderror" id="ciudad" name="ciudad" value="{{ old('ciudad') }}">
                             @error('ciudad')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -64,8 +64,8 @@
 
                         <!-- Dirección -->
                         <div class="col-md-12 mb-3">
-                            <label for="direccion" class="form-label">Dirección Completa <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('direccion') is-invalid @enderror" id="direccion" name="direccion" value="{{ old('direccion') }}" placeholder="Calle, número, colonia, código postal" required>
+                            <label for="direccion" class="form-label">Dirección Completa </label>
+                            <input type="text" class="form-control @error('direccion') is-invalid @enderror" id="direccion" name="direccion" value="{{ old('direccion') }}" placeholder="Calle, número, colonia, código postal">
                             @error('direccion')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -73,8 +73,8 @@
 
                         <!-- Teléfono -->
                         <div class="col-md-6 mb-3">
-                            <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control @error('telefono') is-invalid @enderror" id="telefono" name="telefono" value="{{ old('telefono') }}" placeholder="10 dígitos" required>
+                            <label for="telefono" class="form-label">Teléfono </label>
+                            <input type="tel" class="form-control @error('telefono') is-invalid @enderror" id="telefono" name="telefono" value="{{ old('telefono') }}" placeholder="10 dígitos">
                             @error('telefono')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -82,8 +82,8 @@
 
                         <!-- Correo -->
                         <div class="col-md-6 mb-3">
-                            <label for="correo" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control @error('correo') is-invalid @enderror" id="correo" name="correo" value="{{ old('correo') }}" required>
+                            <label for="correo" class="form-label">Correo Electrónico </label>
+                            <input type="email" class="form-control @error('correo') is-invalid @enderror" id="correo" name="correo" value="{{ old('correo') }}">
                             @error('correo')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -91,8 +91,8 @@
 
                         <!-- Días de Plazo -->
                         <div class="col-md-6 mb-3">
-                            <label for="dias_plazo" class="form-label">Días de Plazo <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control @error('dias_plazo') is-invalid @enderror" id="dias_plazo" name="dias_plazo" value="{{ old('dias_plazo', 0) }}" min="0" required>
+                            <label for="dias_plazo" class="form-label">Días de Plazo </label>
+                            <input type="number" class="form-control @error('dias_plazo') is-invalid @enderror" id="dias_plazo" name="dias_plazo" value="{{ old('dias_plazo', 0) }}" min="0">
                             @error('dias_plazo')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

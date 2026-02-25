@@ -50,14 +50,15 @@ class ProveedorController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:150',
-            'razon_social' => 'required|string|max:200',
-            'rfc' => 'required|string|size:13|unique:proveedores,rfc',
-            'direccion' => 'required|string|max:255',
-            'ciudad' => 'required|string|max:100',
-            'telefono' => 'required|string|max:20',
-            'correo' => 'required|email|max:100',
-            'dias_plazo' => 'required|integer|min:0',
+            'razon_social' => 'nullable|string|max:200',
+            'rfc' => 'nullable|string|size:13|unique:proveedores,rfc',
+            'direccion' => 'nullable|string|max:255',
+            'ciudad' => 'nullable|string|max:100',
+            'telefono' => 'nullable|string|max:20',
+            'correo' => 'nullable|email|max:100',
+            'dias_plazo' => 'nullable|integer|min:0',
             'status' => 'required|in:activo,inactivo'
+            
         ]);
 
         Proveedor::create($validated);
@@ -89,13 +90,13 @@ class ProveedorController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:150',
-            'razon_social' => 'required|string|max:200',
-            'rfc' => 'required|string|size:13|unique:proveedores,rfc,' . $proveedore->id,
-            'direccion' => 'required|string|max:255',
-            'ciudad' => 'required|string|max:100',
-            'telefono' => 'required|string|max:20',
-            'correo' => 'required|email|max:100',
-            'dias_plazo' => 'required|integer|min:0',
+            'razon_social' => 'nullable|string|max:200',
+            'rfc' => 'nullable|string|size:13|unique:proveedores,rfc,' . $proveedore->id,
+            'direccion' => 'nullable|string|max:255',
+            'ciudad' => 'nullable|string|max:100',
+            'telefono' => 'nullable|string|max:20',
+            'correo' => 'nullable|email|max:100',
+            'dias_plazo' => 'nullable|integer|min:0',
             'status' => 'required|in:activo,inactivo'
         ]);
 
