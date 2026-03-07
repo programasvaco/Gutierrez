@@ -62,6 +62,8 @@ class ProductoImportController extends Controller
                 'H1' => 'stockMax',
                 'I1' => 'precioVenta',
                 'J1' => 'precioMinimo',
+                'K1' => 'categoria_id',
+
             ];
 
             foreach ($headers as $cell => $value) {
@@ -83,6 +85,7 @@ class ProductoImportController extends Controller
             $sheet->setCellValue('H2', '500');
             $sheet->setCellValue('I2', '150.50');
             $sheet->setCellValue('J2', '120.00');
+            $sheet->setCellValue('K2', '1');
 
             $sheet->setCellValue('A3', 'PROD002');
             $sheet->setCellValue('B3', 'EMP002');
@@ -94,6 +97,7 @@ class ProductoImportController extends Controller
             $sheet->setCellValue('H3', '300');
             $sheet->setCellValue('I3', '75.25');
             $sheet->setCellValue('J3', '60.00');
+            $sheet->setCellValue('K3', '2');
 
             // Ajustar ancho de columnas
             foreach (range('A', 'J') as $col) {
@@ -118,6 +122,7 @@ class ProductoImportController extends Controller
                 'A11' => '   - stockMax: Stock máximo (obligatorio, número entero)',
                 'A12' => '   - precioVenta: Precio de venta (obligatorio, número decimal)',
                 'A13' => '   - precioMinimo: Precio mínimo (obligatorio, número decimal)',
+                'A14' => '   - categoria_id: Categoria del producto (opcional, numero)',
                 'A15' => '2. No elimine la fila de encabezados',
                 'A16' => '3. Todos los campos marcados como obligatorios no pueden estar vacíos',
                 'A17' => '4. El código debe ser único (no puede estar duplicado)',
@@ -182,7 +187,7 @@ class ProductoImportController extends Controller
             }
 
             $headers = $data[0];
-            $expectedHeaders = ['codigo', 'codigoEmpaque', 'descripcion', 'unidad', 'unidadCompra', 'contenido', 'stockMin', 'stockMax', 'precioVenta', 'precioMinimo'];
+            $expectedHeaders = ['codigo', 'codigoEmpaque', 'descripcion', 'unidad', 'unidadCompra', 'contenido', 'stockMin', 'stockMax', 'precioVenta', 'precioMinimo', 'categoria_id'];
 
             // Validar encabezados
             if ($headers !== $expectedHeaders) {
@@ -215,6 +220,7 @@ class ProductoImportController extends Controller
                     'stockMax' => $row[7] ?? '',
                     'precioVenta' => $row[8] ?? '',
                     'precioMinimo' => $row[9] ?? '',
+                    'categoria_id' => $row[10] ?? '',
                     'row_number' => $rowNumber,
                     'status' => 'ok',
                     'errors' => [],
@@ -231,6 +237,7 @@ class ProductoImportController extends Controller
                     'stockMax' => 'required|integer|min:0',
                     'precioVenta' => 'required|numeric|min:0',
                     'precioMinimo' => 'required|numeric|min:0',
+                    'categoria_id' => 'nullable|exists:categorias,id',
                 ]);
 
                 if ($validator->fails()) {
@@ -322,6 +329,7 @@ class ProductoImportController extends Controller
                     'stock_max' => $row['stockMax'],
                     'precio_venta' => $row['precioVenta'] ?: 0,
                     'precio_minimo' => $row['precioMinimo'] ?: 0,
+                    'categoria_id' => $row['categoria_id'] ?: 0,
                     'status' => 'activo',
                 ];
 
