@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoImportController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CompraController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\CxPagarController;
 use App\Http\Controllers\InventarioImportController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\ProveedorImportController;
 
 // Rutas públicas
 Route::get('/', function () {
@@ -39,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
     
     // Catálogos
+    Route::resource('categorias', CategoriaController::class);
     Route::resource('productos', ProductoController::class);
     
     // Importación de Productos
@@ -48,9 +51,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('productos-import/process', [ProductoImportController::class, 'import'])->name('productos.import.process');
     
     Route::resource('almacenes', AlmacenController::class);
-    Route::resource('proveedores', ProveedorController::class);
-    Route::resource('clientes', ClienteController::class);
 
+    Route::resource('clientes', ClienteController::class);
+    
+    Route::resource('proveedores', ProveedorController::class);
+    Route::get('proveedores-import', [ProveedorImportController::class, 'showImportForm'])->name('proveedores.import');
+    Route::get('proveedores-import/template', [ProveedorImportController::class, 'downloadTemplate'])->name('proveedores.import.template');
+    Route::post('proveedores-import/preview', [ProveedorImportController::class, 'preview'])->name('proveedores.import.preview');
+    Route::post('proveedores-import/process', [ProveedorImportController::class, 'import'])->name('proveedores.import.process');
+    
     // Operaciones
     Route::resource('compras', CompraController::class);
 

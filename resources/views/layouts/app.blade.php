@@ -99,6 +99,7 @@
                             <i class="fas fa-book"></i> Catálogos
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('categorias.index') }}"><i class="fas fa-table-list"></i> Categorías</a></li>
                             <li><a class="dropdown-item" href="{{ route('productos.index') }}"><i class="fas fa-box"></i> Productos</a></li>
                             <li><a class="dropdown-item" href="{{ route('almacenes.index') }}"><i class="fas fa-warehouse"></i> Almacenes</a></li>
                             <li><a class="dropdown-item" href="{{ route('proveedores.index') }}"><i class="fas fa-truck"></i> Proveedores</a></li>

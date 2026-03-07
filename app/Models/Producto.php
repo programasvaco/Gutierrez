@@ -9,39 +9,51 @@ class Producto extends Model
 {
     use HasFactory;
 
-    protected $table = 'productos';
-
     protected $fillable = [
         'codigo',
-        'codigo_empaque',
+        'categoria_id',  // NUEVO
+        'codigoEmpaque',
         'descripcion',
         'unidad',
         'unidad_compra',
         'contenido',
         'stock_min',
         'stock_max',
-        'precio_venta',
-        'precio_minimo',
         'status',
-        'imagen'
-    ];
-
-    protected $casts = [
-        'contenido' => 'decimal:2',
-        'stock_min' => 'integer',
-        'stock_max' => 'integer',
-        'precio_venta' => 'decimal:2',
-        'precio_minimo' => 'decimal:2',
+        'imagen',
     ];
 
     /**
-     * Scope para filtrar productos activos
+     * Relación con categoría
      */
-    public function scopeActivos($query)
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
+
+    /**
+     * Relación con inventario
+     */
+    public function inventario()
+    {
+        return $this->hasMany(Inventario::class);
+    }
+
+    /**
+     * Scope para productos activos
+     */
+    public function scopeActivo($query)
     {
         return $query->where('status', 'activo');
     }
 
+    /**
+     * Accessor para nombre de categoría
+     */
+    public function getCategoriaNombreAttribute()
+    {
+        return $this->categoria ? $this->categoria->nombre : 'Sin categoría';
+    }
     /**
      * Scope para filtrar productos inactivos
      */
