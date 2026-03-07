@@ -128,7 +128,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('inventarios.index') }}"><i class="fas fa-boxes"></i> Inventarios</a></li>
-                            <li><a class="dropdown-item" href="{{ route('cxpagar.index') }}"><i class="fas fa-money-bill-wave"></i> Cuentas por Pagar</a></li>
+                            <li><a class="dropdown-item" href="{{ route('cxcobrar.index') }}"><i class="fas fa-money-bill-trend-up"></i></i> Cuentas por Cobrar</a></li>
+                            <li><a class="dropdown-item" href="{{ route('cxpagar.index') }}"><i class="fas fa-money-bill-transfer"></i></i> Cuentas por Pagar</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('inventarios.stock-bajo') }}"><i class="fas fa-exclamation-triangle text-warning"></i> Stock Bajo</a></li>
                             <li><a class="dropdown-item" href="{{ route('cxpagar.vencidas') }}"><i class="fas fa-exclamation-circle text-danger"></i> Cuentas Vencidas</a></li>
@@ -141,6 +142,7 @@
                             <i class="fas fa-chart-bar"></i> Reportes
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('flujo-caja.index') }}"><i class="fas fa-money-bill-1-wave"></i></i> Caja</a></li>
                             <li><a class="dropdown-item" href="{{ route('kardex.index') }}"><i class="fas fa-clipboard-list"></i> Kardex</a></li>
                             <li><a class="dropdown-item" href="{{ route('kardex.reporte') }}"><i class="fas fa-chart-line"></i> Movimientos General</a></li>
                         </ul>

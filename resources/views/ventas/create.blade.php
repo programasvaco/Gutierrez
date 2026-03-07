@@ -51,7 +51,19 @@
                             @enderror
                         </div>
 
-                        <div class="col-md-5 mb-3">
+                        <div class="col-md-3 mb-3">
+                            <label for="tipo_pago" class="form-label">Tipo de Pago <span class="text-danger">*</span></label>
+                            <select class="form-select @error('tipo_pago') is-invalid @enderror"
+                                id="tipo_pago" name="tipo_pago" required>
+                                <option value="contado" {{ old('tipo_pago', 'contado') === 'contado' ? 'selected' : '' }}>Contado</option>
+                                <option value="credito" {{ old('tipo_pago') === 'credito' ? 'selected' : '' }}>Crédito</option>
+                            </select>
+                            @error('tipo_pago')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4 mb-3">
                             <label for="cliente_id" class="form-label">Cliente <small class="text-muted">(opcional — mostrador si se deja vacío)</small></label>
                             <select class="form-select @error('cliente_id') is-invalid @enderror"
                                 id="cliente_id" name="cliente_id">
@@ -159,6 +171,7 @@ document.getElementById('almacen_id').addEventListener('change', function () {
         btnGuardar.disabled = true;
         contenedor.style.display = 'none';
         sinAlmacen.style.display = 'block';
+        sinAlmacen.innerHTML = '<i class="fas fa-arrow-up"></i> Seleccione un almacén para ver los artículos disponibles.';
         document.getElementById('detallesBody').innerHTML = '';
         productosAlmacen = [];
         calcularTotal();
@@ -251,8 +264,8 @@ function onProductoChange(idx) {
     const opt  = sel.options[sel.selectedIndex];
     if (!opt || !opt.value) return;
 
-    const precio    = parseFloat(opt.dataset.precio) || 0;
-    const existencia= parseFloat(opt.dataset.existencia) || 0;
+    const precio     = parseFloat(opt.dataset.precio) || 0;
+    const existencia = parseFloat(opt.dataset.existencia) || 0;
 
     document.getElementById(`precio-${idx}`).value = precio.toFixed(2);
     document.getElementById(`exist-${idx}`).textContent = existencia.toFixed(2);
@@ -310,7 +323,7 @@ document.getElementById('formVenta').addEventListener('submit', function (e) {
     }
 
     let valido = true;
-    filas.forEach((row, i) => {
+    filas.forEach((row) => {
         const sel  = row.querySelector('select');
         const cant = row.querySelector('[name*="[cantidad]"]');
         if (!sel.value || parseFloat(cant.value) <= 0) {

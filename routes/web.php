@@ -18,6 +18,8 @@ use App\Http\Controllers\CxPagarController;
 use App\Http\Controllers\InventarioImportController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ProveedorImportController;
+use App\Http\Controllers\FlujoCajaController;
+use App\Http\Controllers\CxCobrarController;
 
 // Rutas públicas
 Route::get('/', function () {
@@ -93,7 +95,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('cxpagar', [CxPagarController::class, 'index'])->name('cxpagar.index');
     Route::get('cxpagar/vencidas', [CxPagarController::class, 'vencidas'])->name('cxpagar.vencidas');
     Route::get('cxpagar/por-proveedor', [CxPagarController::class, 'porProveedor'])->name('cxpagar.por-proveedor');
+
+    // Consultas - Cuentas por Cobrar
+    Route::get('cxcobrar', [CxCobrarController::class, 'index'])->name('cxcobrar.index');
+    Route::get('cxcobrar/vencidas', [CxCobrarController::class, 'vencidas'])->name('cxcobrar.vencidas');
+    Route::get('cxcobrar/por-cliente', [CxCobrarController::class, 'porCliente'])->name('cxcobrar.por-cliente');
     
+    // Flujo de Caja
+    Route::get('flujo-caja', [FlujoCajaController::class, 'index'])->name('flujo-caja.index');
+
     // Reportes - Kardex
     Route::get('kardex', [KardexController::class, 'index'])->name('kardex.index');
     Route::get('kardex/reporte', [KardexController::class, 'reporte'])->name('kardex.reporte');

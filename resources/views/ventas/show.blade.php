@@ -43,6 +43,18 @@
                             <small class="text-muted">{{ $venta->almacen->ciudad }}</small>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="info-item">
+                            <label class="text-muted"><i class="fas fa-credit-card"></i> Tipo de Pago:</label>
+                            <p class="fw-bold">
+                                @if($venta->tipo_pago === 'contado')
+                                    <span class="badge bg-success">Contado</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">Crédito</span>
+                                @endif
+                            </p>
+                        </div>
+                    </div>
                     <div class="col-md-3">
                         <div class="info-item">
                             <label class="text-muted"><i class="fas fa-user"></i> Cliente:</label>

@@ -21,6 +21,11 @@ class Cliente extends Model
         'telefono',
         'correoe',
         'status',
+        'dias_plazo',
+    ];
+
+    protected $casts = [
+        'dias_plazo' => 'integer',
     ];
 
     public function scopeActivos($query)

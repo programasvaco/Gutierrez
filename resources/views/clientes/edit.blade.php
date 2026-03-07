@@ -98,8 +98,18 @@
                             @enderror
                         </div>
 
+                        <!-- Días de Plazo -->
+                        <div class="col-md-3 mb-3">
+                            <label for="dias_plazo" class="form-label">Días de Plazo <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control @error('dias_plazo') is-invalid @enderror"
+                                id="dias_plazo" name="dias_plazo" value="{{ old('dias_plazo', $cliente->dias_plazo) }}" min="0" max="365" required>
+                            @error('dias_plazo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Estado -->
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label for="status" class="form-label">Estado <span class="text-danger">*</span></label>
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
                                 <option value="activo" {{ old('status', $cliente->status) == 'activo' ? 'selected' : '' }}>Activo</option>

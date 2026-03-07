@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Compra;
 use App\Models\DetalleCompra;
+use App\Models\FlujoCaja;
 use App\Models\Inventario;
 use App\Models\CxPagar;
 use App\Models\Proveedor;
@@ -138,6 +139,14 @@ class CompraController extends Controller
                 'saldo' => $total,
             ]);
 
+            FlujoCaja::create([
+                'fecha'      => $validated['fecha'],
+                'tipo'       => 'Salida',
+                'referencia' => $validated['referencia'],
+                'cantidad'   => $total,
+                'almacen_id' => $validated['almacen_id'],
+            ]);
+
             DB::commit();
 
             return redirect()->route('compras.show', $compra)
@@ -200,6 +209,8 @@ class CompraController extends Controller
                     $compra->fecha->toDateString()
                 );
             }
+
+            FlujoCaja::where('referencia', $compra->referencia)->delete();
 
             // Eliminar la compra (esto eliminará en cascada detalles y cxpagar)
             $compra->delete();

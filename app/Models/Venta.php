@@ -18,6 +18,7 @@ class Venta extends Model
         'cliente_id',
         'subtotal',
         'total',
+        'tipo_pago',
     ];
 
     protected $casts = [
@@ -39,6 +40,11 @@ class Venta extends Model
     public function detalles()
     {
         return $this->hasMany(DetalleVenta::class);
+    }
+
+    public function cuentaPorCobrar()
+    {
+        return $this->hasOne(CxCobrar::class);
     }
 
     public static function generarFolio(): string

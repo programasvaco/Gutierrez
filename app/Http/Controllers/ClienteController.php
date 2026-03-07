@@ -47,6 +47,7 @@ class ClienteController extends Controller
             'telefono'    => 'nullable|string|max:20',
             'correoe'     => 'nullable|email|max:100',
             'status'      => 'required|in:activo,inactivo',
+            'dias_plazo'  => 'required|integer|min:0|max:365',
         ]);
 
         Cliente::create($validated);
@@ -77,6 +78,7 @@ class ClienteController extends Controller
             'telefono'    => 'nullable|string|max:20',
             'correoe'     => 'nullable|email|max:100',
             'status'      => 'required|in:activo,inactivo',
+            'dias_plazo'  => 'required|integer|min:0|max:365',
         ]);
 
         $cliente->update($validated);

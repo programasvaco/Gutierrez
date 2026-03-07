@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Venta;
 use App\Models\DetalleVenta;
+use App\Models\FlujoCaja;
+use App\Models\CxCobrar;
 use App\Models\Inventario;
 use App\Models\Almacen;
 use App\Models\Cliente;
@@ -78,6 +80,7 @@ class VentaController extends Controller
             'fecha'                        => 'required|date',
             'almacen_id'                   => 'required|exists:almacenes,id',
             'cliente_id'                   => 'nullable|exists:clientes,id',
+            'tipo_pago'                    => 'required|in:contado,credito',
             'detalles'                     => 'required|array|min:1',
             'detalles.*.producto_id'       => 'required|exists:productos,id',
             'detalles.*.cantidad'          => 'required|numeric|min:0.01',
@@ -124,6 +127,7 @@ class VentaController extends Controller
                 'cliente_id'  => $validated['cliente_id'] ?? null,
                 'subtotal'    => $subtotal,
                 'total'       => $subtotal,
+                'tipo_pago'   => $validated['tipo_pago'],
             ]);
 
             foreach ($validated['detalles'] as $d) {
@@ -146,6 +150,30 @@ class VentaController extends Controller
                     $folio,
                     $validated['fecha']
                 );
+            }
+
+            if ($validated['tipo_pago'] === 'contado') {
+                FlujoCaja::create([
+                    'fecha'       => $validated['fecha'],
+                    'tipo'        => 'Entrada',
+                    'referencia'  => $folio,
+                    'cantidad'    => $subtotal,
+                    'almacen_id'  => $validated['almacen_id'],
+                ]);
+            }
+
+            if ($validated['tipo_pago'] === 'credito' && ! empty($validated['cliente_id'])) {
+                $cliente          = Cliente::findOrFail($validated['cliente_id']);
+                $fechaVencimiento = date('Y-m-d', strtotime($validated['fecha'] . ' + ' . $cliente->dias_plazo . ' days'));
+
+                CxCobrar::create([
+                    'cliente_id'        => $validated['cliente_id'],
+                    'venta_id'          => $venta->id,
+                    'fecha'             => $validated['fecha'],
+                    'fecha_vencimiento' => $fechaVencimiento,
+                    'importe'           => $subtotal,
+                    'saldo'             => $subtotal,
+                ]);
             }
 
             DB::commit();
@@ -194,6 +222,9 @@ class VentaController extends Controller
                     $venta->fecha->toDateString()
                 );
             }
+
+            FlujoCaja::where('referencia', $venta->folio)->delete();
+            CxCobrar::where('venta_id', $venta->id)->delete();
 
             $venta->delete();
 
