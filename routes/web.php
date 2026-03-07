@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoImportController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\TraspasoController;
 use App\Http\Controllers\TraspasoPrintController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\KardexController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\CxPagarController;
 use App\Http\Controllers\InventarioImportController;
+use App\Http\Controllers\VentaController;
 
 // Rutas públicas
 Route::get('/', function () {
@@ -47,9 +49,14 @@ Route::middleware(['auth'])->group(function () {
     
     Route::resource('almacenes', AlmacenController::class);
     Route::resource('proveedores', ProveedorController::class);
-    
+    Route::resource('clientes', ClienteController::class);
+
     // Operaciones
     Route::resource('compras', CompraController::class);
+
+    // Ventas
+    Route::get('ventas/productos/{almacen}', [VentaController::class, 'productosAlmacen'])->name('ventas.productos-almacen');
+    Route::resource('ventas', VentaController::class);
     
     // Traspasos
     Route::resource('traspasos', TraspasoController::class);
