@@ -43,6 +43,30 @@ class ProductoController extends Controller
     }
 
     /**
+     * AJAX: buscar productos por código o descripción.
+     */
+    public function search(Request $request)
+    {
+        $q = $request->input('q', '');
+        $productos = Producto::where('status', 'activo')
+            ->where(function ($query) use ($q) {
+                $query->where('codigo', 'like', "%{$q}%")
+                      ->orWhere('descripcion', 'like', "%{$q}%");
+            })
+            ->select('id', 'codigo', 'descripcion', 'unidad', 'precio_venta')
+            ->limit(30)
+            ->get()
+            ->map(fn($p) => [
+                'id'   => $p->id,
+                'text' => $p->codigo . ' - ' . $p->descripcion,
+                'unidad'        => $p->unidad,
+                'precio_venta'  => (float) $p->precio_venta,
+            ]);
+
+        return response()->json(['results' => $productos]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

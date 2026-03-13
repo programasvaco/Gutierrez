@@ -5,22 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Almacen extends Model
+class Cliente extends Model
 {
     use HasFactory;
 
-    protected $table = 'almacenes';
+    protected $table = 'clientes';
 
     protected $fillable = [
         'nombre',
+        'razon_social',
         'domicilio',
         'ciudad',
+        'cpostal',
+        'rfc',
+        'telefono',
+        'correoe',
         'status',
-        'permite_ventas',
+        'dias_plazo',
     ];
 
     protected $casts = [
-        'permite_ventas' => 'boolean',
+        'dias_plazo' => 'integer',
     ];
 
     public function scopeActivos($query)
@@ -33,8 +38,13 @@ class Almacen extends Model
         return $query->where('status', 'inactivo');
     }
 
-    public function scopeConVentas($query)
+    public function setRfcAttribute($value)
     {
-        return $query->where('permite_ventas', true)->where('status', 'activo');
+        $this->attributes['rfc'] = $value ? strtoupper($value) : null;
+    }
+
+    public function setCorreoeAttribute($value)
+    {
+        $this->attributes['correoe'] = $value ? strtolower($value) : null;
     }
 }

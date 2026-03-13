@@ -63,6 +63,17 @@
                         @enderror
                     </div>
 
+                    <!-- Permite Ventas -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="permite_ventas" name="permite_ventas" value="1" {{ old('permite_ventas') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="permite_ventas">
+                                <i class="fas fa-cash-register"></i> Permite ventas al público
+                            </label>
+                        </div>
+                        <small class="text-muted">Activa este almacén para registrar ventas basadas en su existencia.</small>
+                    </div>
+
                     <hr>
 
                     <div class="d-flex justify-content-between">

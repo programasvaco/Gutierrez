@@ -48,11 +48,13 @@ class AlmacenController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:100',
-            'domicilio' => 'required|string|max:255',
-            'ciudad' => 'required|string|max:100',
-            'status' => 'required|in:activo,inactivo'
+            'nombre'   => 'required|string|max:100',
+            'domicilio'=> 'required|string|max:255',
+            'ciudad'   => 'required|string|max:100',
+            'status'   => 'required|in:activo,inactivo',
         ]);
+
+        $validated['permite_ventas'] = $request->boolean('permite_ventas');
 
         Almacen::create($validated);
 
@@ -82,11 +84,13 @@ class AlmacenController extends Controller
     public function update(Request $request, Almacen $almacene)
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:100',
-            'domicilio' => 'required|string|max:255',
-            'ciudad' => 'required|string|max:100',
-            'status' => 'required|in:activo,inactivo'
+            'nombre'   => 'required|string|max:100',
+            'domicilio'=> 'required|string|max:255',
+            'ciudad'   => 'required|string|max:100',
+            'status'   => 'required|in:activo,inactivo',
         ]);
+
+        $validated['permite_ventas'] = $request->boolean('permite_ventas');
 
         $almacene->update($validated);
 

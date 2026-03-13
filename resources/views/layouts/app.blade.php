@@ -95,7 +95,7 @@
 
                     <!-- Catálogos -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ request()->routeIs('productos.*') || request()->routeIs('almacenes.*') || request()->routeIs('proveedores.*') ? 'active' : '' }}" href="#" id="catalogosDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('productos.*') || request()->routeIs('almacenes.*') || request()->routeIs('proveedores.*') || request()->routeIs('clientes.*') ? 'active' : '' }}" href="#" id="catalogosDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-book"></i> Catálogos
                         </a>
                         <ul class="dropdown-menu">
@@ -103,16 +103,18 @@
                             <li><a class="dropdown-item" href="{{ route('productos.index') }}"><i class="fas fa-box"></i> Productos</a></li>
                             <li><a class="dropdown-item" href="{{ route('almacenes.index') }}"><i class="fas fa-warehouse"></i> Almacenes</a></li>
                             <li><a class="dropdown-item" href="{{ route('proveedores.index') }}"><i class="fas fa-truck"></i> Proveedores</a></li>
+                            <li><a class="dropdown-item" href="{{ route('clientes.index') }}"><i class="fas fa-users"></i> Clientes</a></li>
                         </ul>
                     </li>
 
                     <!-- Operaciones -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ request()->routeIs('compras.*') || request()->routeIs('traspasos.*') ? 'active' : '' }}" href="#" id="operacionesDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('compras.*') || request()->routeIs('traspasos.*') || request()->routeIs('ventas.*') ? 'active' : '' }}" href="#" id="operacionesDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-cash-register"></i> Operaciones
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('compras.index') }}"><i class="fas fa-shopping-cart"></i> Compras</a></li>
+                            <li><a class="dropdown-item" href="{{ route('ventas.index') }}"><i class="fas fa-shopping-bag"></i> Ventas</a></li>
                             <li><a class="dropdown-item" href="{{ route('traspasos.index') }}"><i class="fas fa-exchange-alt"></i> Traspasos</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('traspasos.por-recibir') }}"><i class="fas fa-truck-loading"></i> Traspasos Por Recibir</a></li>
@@ -126,7 +128,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('inventarios.index') }}"><i class="fas fa-boxes"></i> Inventarios</a></li>
-                            <li><a class="dropdown-item" href="{{ route('cxpagar.index') }}"><i class="fas fa-money-bill-wave"></i> Cuentas por Pagar</a></li>
+                            <li><a class="dropdown-item" href="{{ route('cxcobrar.index') }}"><i class="fas fa-money-bill-trend-up"></i></i> Cuentas por Cobrar</a></li>
+                            <li><a class="dropdown-item" href="{{ route('cxpagar.index') }}"><i class="fas fa-money-bill-transfer"></i></i> Cuentas por Pagar</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('inventarios.stock-bajo') }}"><i class="fas fa-exclamation-triangle text-warning"></i> Stock Bajo</a></li>
                             <li><a class="dropdown-item" href="{{ route('cxpagar.vencidas') }}"><i class="fas fa-exclamation-circle text-danger"></i> Cuentas Vencidas</a></li>
@@ -139,6 +142,7 @@
                             <i class="fas fa-chart-bar"></i> Reportes
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('flujo-caja.index') }}"><i class="fas fa-money-bill-1-wave"></i></i> Caja</a></li>
                             <li><a class="dropdown-item" href="{{ route('kardex.index') }}"><i class="fas fa-clipboard-list"></i> Kardex</a></li>
                             <li><a class="dropdown-item" href="{{ route('kardex.reporte') }}"><i class="fas fa-chart-line"></i> Movimientos General</a></li>
                         </ul>

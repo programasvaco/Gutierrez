@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductoImportController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\TraspasoController;
 use App\Http\Controllers\TraspasoPrintController;
@@ -15,7 +16,11 @@ use App\Http\Controllers\KardexController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\CxPagarController;
 use App\Http\Controllers\InventarioImportController;
+use App\Http\Controllers\VentaController;
+use App\Http\Controllers\VentaTicketController;
 use App\Http\Controllers\ProveedorImportController;
+use App\Http\Controllers\FlujoCajaController;
+use App\Http\Controllers\CxCobrarController;
 
 // Rutas públicas
 Route::get('/', function () {
@@ -40,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Catálogos
     Route::resource('categorias', CategoriaController::class);
+    Route::get('productos/search', [ProductoController::class, 'search'])->name('productos.search');
     Route::resource('productos', ProductoController::class);
     
     // Importación de Productos
@@ -49,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('productos-import/process', [ProductoImportController::class, 'import'])->name('productos.import.process');
     
     Route::resource('almacenes', AlmacenController::class);
+
+    Route::resource('clientes', ClienteController::class);
     
     Route::resource('proveedores', ProveedorController::class);
     Route::get('proveedores-import', [ProveedorImportController::class, 'showImportForm'])->name('proveedores.import');
@@ -58,6 +66,11 @@ Route::middleware(['auth'])->group(function () {
     
     // Operaciones
     Route::resource('compras', CompraController::class);
+
+    // Ventas
+    Route::get('ventas/productos/{almacen}', [VentaController::class, 'productosAlmacen'])->name('ventas.productos-almacen');
+    Route::get('ventas/{venta}/ticket', [VentaTicketController::class, 'print'])->name('ventas.ticket');
+    Route::resource('ventas', VentaController::class);
     
     // Traspasos
     Route::resource('traspasos', TraspasoController::class);
@@ -85,7 +98,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('cxpagar', [CxPagarController::class, 'index'])->name('cxpagar.index');
     Route::get('cxpagar/vencidas', [CxPagarController::class, 'vencidas'])->name('cxpagar.vencidas');
     Route::get('cxpagar/por-proveedor', [CxPagarController::class, 'porProveedor'])->name('cxpagar.por-proveedor');
+
+    // Consultas - Cuentas por Cobrar
+    Route::get('cxcobrar', [CxCobrarController::class, 'index'])->name('cxcobrar.index');
+    Route::get('cxcobrar/vencidas', [CxCobrarController::class, 'vencidas'])->name('cxcobrar.vencidas');
+    Route::get('cxcobrar/por-cliente', [CxCobrarController::class, 'porCliente'])->name('cxcobrar.por-cliente');
     
+    // Flujo de Caja
+    Route::get('flujo-caja', [FlujoCajaController::class, 'index'])->name('flujo-caja.index');
+
     // Reportes - Kardex
     Route::get('kardex', [KardexController::class, 'index'])->name('kardex.index');
     Route::get('kardex/reporte', [KardexController::class, 'reporte'])->name('kardex.reporte');
