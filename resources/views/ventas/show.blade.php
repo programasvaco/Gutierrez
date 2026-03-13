@@ -146,9 +146,14 @@
     <a href="{{ route('ventas.index') }}" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Volver al Listado
     </a>
-    <button type="button" class="btn btn-danger" onclick="confirmarCancelacion()">
-        <i class="fas fa-times-circle"></i> Cancelar Venta
-    </button>
+    <div>
+        <a href="{{ route('ventas.ticket', $venta) }}" target="_blank" class="btn btn-dark me-2">
+            <i class="fas fa-print"></i> Imprimir Ticket
+        </a>
+        <button type="button" class="btn btn-danger" onclick="confirmarCancelacion()">
+            <i class="fas fa-times-circle"></i> Cancelar Venta
+        </button>
+    </div>
 </div>
 
 <form id="delete-form" action="{{ route('ventas.destroy', $venta) }}" method="POST" style="display: none;">

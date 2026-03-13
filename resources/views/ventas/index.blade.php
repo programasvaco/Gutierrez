@@ -89,6 +89,9 @@
                                     <a href="{{ route('ventas.show', $venta) }}" class="btn btn-sm btn-info" title="Ver">
                                         <i class="fas fa-eye"></i>
                                     </a>
+                                    <a href="{{ route('ventas.ticket', $venta) }}" target="_blank" class="btn btn-sm btn-dark" title="Imprimir ticket">
+                                        <i class="fas fa-print"></i>
+                                    </a>
                                     <button type="button" class="btn btn-sm btn-danger" onclick="confirmarCancelacion({{ $venta->id }}, '{{ $venta->folio }}')" title="Cancelar">
                                         <i class="fas fa-times"></i>
                                     </button>

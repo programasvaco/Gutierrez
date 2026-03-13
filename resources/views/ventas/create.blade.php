@@ -152,13 +152,24 @@
 </form>
 @endsection
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<style>
+.select2-container { width: 100% !important; }
+.select2-container .select2-selection--single { height: 31px; border: 1px solid #dee2e6; border-radius: 4px; }
+.select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 29px; font-size: 0.875rem; }
+.select2-container--default .select2-selection--single .select2-selection__arrow { height: 29px; }
+</style>
+@endpush
+
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 let detalleIndex = 0;
-let productosAlmacen = [];
+let almacenSeleccionado = null;
 const productosBaseUrl = "{{ url('ventas/productos') }}";
 
-// Al cambiar el almacén, carga los productos vía AJAX
 document.getElementById('almacen_id').addEventListener('change', function () {
     const almacenId = this.value;
     const btnAgregar = document.getElementById('btnAgregarProducto');
@@ -166,33 +177,34 @@ document.getElementById('almacen_id').addEventListener('change', function () {
     const contenedor = document.getElementById('contenedorDetalles');
     const sinAlmacen = document.getElementById('sinAlmacen');
 
+    // Limpiar filas existentes
+    document.getElementById('detallesBody').innerHTML = '';
+    detalleIndex = 0;
+    calcularTotal();
+
     if (!almacenId) {
+        almacenSeleccionado = null;
         btnAgregar.disabled = true;
         btnGuardar.disabled = true;
         contenedor.style.display = 'none';
         sinAlmacen.style.display = 'block';
         sinAlmacen.innerHTML = '<i class="fas fa-arrow-up"></i> Seleccione un almacén para ver los artículos disponibles.';
-        document.getElementById('detallesBody').innerHTML = '';
-        productosAlmacen = [];
-        calcularTotal();
         return;
     }
 
-    fetch(`${productosBaseUrl}/${almacenId}`)
+    // Verificar que el almacén tenga existencias (petición rápida sin ?q)
+    fetch(`${productosBaseUrl}/${almacenId}?limit=1`)
         .then(r => r.json())
         .then(data => {
-            productosAlmacen = data;
-            document.getElementById('detallesBody').innerHTML = '';
-            detalleIndex = 0;
-            calcularTotal();
-
             if (data.length === 0) {
+                almacenSeleccionado = null;
                 sinAlmacen.innerHTML = '<i class="fas fa-exclamation-circle text-warning"></i> Este almacén no tiene existencias disponibles.';
                 sinAlmacen.style.display = 'block';
                 contenedor.style.display = 'none';
                 btnAgregar.disabled = true;
                 btnGuardar.disabled = true;
             } else {
+                almacenSeleccionado = almacenId;
                 sinAlmacen.style.display = 'none';
                 contenedor.style.display = 'block';
                 btnAgregar.disabled = false;
@@ -206,27 +218,46 @@ document.getElementById('almacen_id').addEventListener('change', function () {
         });
 });
 
+function initSelect2Venta(idx) {
+    $(`#producto-select-${idx}`).select2({
+        placeholder: 'Buscar artículo...',
+        minimumInputLength: 1,
+        ajax: {
+            url: `${productosBaseUrl}/${almacenSeleccionado}`,
+            dataType: 'json',
+            delay: 300,
+            data: params => ({ q: params.term }),
+            processResults: data => ({ results: data.results }),
+            cache: true,
+        },
+    }).on('select2:select', function (e) {
+        const data = e.params.data;
+        document.querySelector(`[name="detalles[${idx}][producto_id]"]`).value = data.id;
+
+        const precio     = data.precio_venta || 0;
+        const existencia = data.existencia   || 0;
+
+        document.getElementById(`precio-${idx}`).value      = precio.toFixed(2);
+        document.getElementById(`exist-${idx}`).textContent  = existencia.toFixed(2);
+        document.getElementById(`exist-${idx}`).className    = existencia > 0 ? 'badge bg-success' : 'badge bg-danger';
+        document.getElementById(`cant-${idx}`).max           = existencia;
+
+        calcularSubtotal(idx);
+    });
+}
+
 function agregarDetalle() {
-    if (productosAlmacen.length === 0) return;
+    if (!almacenSeleccionado) return;
 
     const tbody = document.getElementById('detallesBody');
-    const idx = detalleIndex;
-
-    const options = productosAlmacen.map(p =>
-        `<option value="${p.id}" data-precio="${p.precio_venta}" data-existencia="${p.existencia}" data-unidad="${p.unidad}">
-            ${p.codigo} — ${p.descripcion} (${p.unidad})
-        </option>`
-    ).join('');
-
-    const row = document.createElement('tr');
+    const idx   = detalleIndex;
+    const row   = document.createElement('tr');
     row.id = `detalle-${idx}`;
+
     row.innerHTML = `
         <td>
-            <select class="form-select form-select-sm" name="detalles[${idx}][producto_id]"
-                required onchange="onProductoChange(${idx})">
-                <option value="">Seleccione...</option>
-                ${options}
-            </select>
+            <input type="hidden" name="detalles[${idx}][producto_id]" required>
+            <select id="producto-select-${idx}" style="width:100%"></select>
         </td>
         <td class="text-center">
             <span id="exist-${idx}" class="badge bg-secondary">—</span>
@@ -256,23 +287,8 @@ function agregarDetalle() {
     `;
 
     tbody.appendChild(row);
+    initSelect2Venta(idx);
     detalleIndex++;
-}
-
-function onProductoChange(idx) {
-    const sel  = document.querySelector(`[name="detalles[${idx}][producto_id]"]`);
-    const opt  = sel.options[sel.selectedIndex];
-    if (!opt || !opt.value) return;
-
-    const precio     = parseFloat(opt.dataset.precio) || 0;
-    const existencia = parseFloat(opt.dataset.existencia) || 0;
-
-    document.getElementById(`precio-${idx}`).value = precio.toFixed(2);
-    document.getElementById(`exist-${idx}`).textContent = existencia.toFixed(2);
-    document.getElementById(`exist-${idx}`).className = existencia > 0 ? 'badge bg-success' : 'badge bg-danger';
-    document.getElementById(`cant-${idx}`).max = existencia;
-
-    calcularSubtotal(idx);
 }
 
 function onCantidadChange(idx) {
@@ -295,8 +311,7 @@ function onCantidadChange(idx) {
 function calcularSubtotal(idx) {
     const cantidad = parseFloat(document.getElementById(`cant-${idx}`).value) || 0;
     const precio   = parseFloat(document.getElementById(`precio-${idx}`).value) || 0;
-    const sub      = cantidad * precio;
-    document.getElementById(`sub-${idx}`).textContent = '$' + sub.toFixed(2);
+    document.getElementById(`sub-${idx}`).textContent = '$' + (cantidad * precio).toFixed(2);
     calcularTotal();
 }
 
@@ -313,7 +328,6 @@ function eliminarDetalle(idx) {
     if (row) { row.remove(); calcularTotal(); }
 }
 
-// Validar antes de enviar
 document.getElementById('formVenta').addEventListener('submit', function (e) {
     const filas = document.querySelectorAll('[id^="detalle-"]');
     if (filas.length === 0) {
@@ -324,16 +338,14 @@ document.getElementById('formVenta').addEventListener('submit', function (e) {
 
     let valido = true;
     filas.forEach((row) => {
-        const sel  = row.querySelector('select');
-        const cant = row.querySelector('[name*="[cantidad]"]');
-        if (!sel.value || parseFloat(cant.value) <= 0) {
-            valido = false;
-        }
+        const hiddenId = row.querySelector('input[type="hidden"]');
+        const cant     = row.querySelector('[name*="[cantidad]"]');
+        if (!hiddenId.value || parseFloat(cant.value) <= 0) valido = false;
     });
 
     if (!valido) {
         e.preventDefault();
-        alert('Complete todos los campos de los artículos y asegúrese de que las cantidades sean mayores a cero.');
+        alert('Complete todos los campos y asegúrese de que las cantidades sean mayores a cero.');
     }
 });
 </script>

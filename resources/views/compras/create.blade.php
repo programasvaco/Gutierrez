@@ -150,43 +150,74 @@
 </form>
 @endsection
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<style>
+.select2-container { width: 100% !important; }
+.select2-container .select2-selection--single { height: 31px; border: 1px solid #dee2e6; border-radius: 4px; }
+.select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 29px; font-size: 0.875rem; }
+.select2-container--default .select2-selection--single .select2-selection__arrow { height: 29px; }
+</style>
+@endpush
+
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 let detalleIndex = 0;
-const productos = @json($productos);
+const searchUrl = '{{ route("productos.search") }}';
+
+function initSelect2(index) {
+    $(`#producto-select-${index}`).select2({
+        placeholder: 'Buscar producto...',
+        minimumInputLength: 1,
+        ajax: {
+            url: searchUrl,
+            dataType: 'json',
+            delay: 300,
+            data: params => ({ q: params.term }),
+            processResults: data => ({ results: data.results }),
+            cache: true,
+        },
+    }).on('select2:select', function (e) {
+        const data = e.params.data;
+        document.querySelector(`[name="detalles[${index}][producto_id]"]`).value = data.id;
+        calcularSubtotal(index);
+    });
+}
 
 function agregarDetalle() {
     const tbody = document.getElementById('detallesBody');
     const row = document.createElement('tr');
     row.id = `detalle-${detalleIndex}`;
-    
+    const idx = detalleIndex;
+
     row.innerHTML = `
         <td>
-            <select class="form-select form-select-sm" name="detalles[${detalleIndex}][producto_id]" required onchange="actualizarProducto(${detalleIndex})">
-                <option value="">Seleccione un producto...</option>
-                ${productos.map(p => `<option value="${p.id}">${p.codigo} - ${p.descripcion}</option>`).join('')}
-            </select>
+            <input type="hidden" name="detalles[${idx}][producto_id]" id="producto-id-${idx}" required>
+            <select id="producto-select-${idx}" class="form-select form-select-sm" style="width:100%"></select>
         </td>
         <td>
-            <input type="number" step="0.01" class="form-control form-control-sm" name="detalles[${detalleIndex}][cantidad]" value="1" min="0.01" required onchange="calcularSubtotal(${detalleIndex})">
+            <input type="number" step="0.01" class="form-control form-control-sm" name="detalles[${idx}][cantidad]" value="1" min="0.01" required onchange="calcularSubtotal(${idx})">
         </td>
         <td>
-            <input type="number" step="0.01" class="form-control form-control-sm" name="detalles[${detalleIndex}][costo]" value="0" min="0" required onchange="calcularSubtotal(${detalleIndex})">
+            <input type="number" step="0.01" class="form-control form-control-sm" name="detalles[${idx}][costo]" value="0" min="0" required onchange="calcularSubtotal(${idx})">
         </td>
         <td>
-            <input type="number" step="0.01" class="form-control form-control-sm" name="detalles[${detalleIndex}][impuestos]" value="0" min="0" required onchange="calcularTotales()">
+            <input type="number" step="0.01" class="form-control form-control-sm" name="detalles[${idx}][impuestos]" value="0" min="0" required onchange="calcularTotales()">
         </td>
         <td>
-            <input type="text" class="form-control form-control-sm text-end" id="subtotal-${detalleIndex}" value="$0.00" readonly>
+            <input type="text" class="form-control form-control-sm text-end" id="subtotal-${idx}" value="$0.00" readonly>
         </td>
         <td class="text-center">
-            <button type="button" class="btn btn-sm btn-danger" onclick="eliminarDetalle(${detalleIndex})">
+            <button type="button" class="btn btn-sm btn-danger" onclick="eliminarDetalle(${idx})">
                 <i class="fas fa-trash"></i>
             </button>
         </td>
     `;
-    
+
     tbody.appendChild(row);
+    initSelect2(idx);
     detalleIndex++;
 }
 

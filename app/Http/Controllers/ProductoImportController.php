@@ -329,7 +329,7 @@ class ProductoImportController extends Controller
                     'stock_max' => $row['stockMax'],
                     'precio_venta' => $row['precioVenta'] ?: 0,
                     'precio_minimo' => $row['precioMinimo'] ?: 0,
-                    'categoria_id' => $row['categoria_id'] ?: 0,
+                    'categoria_id' => $row['categoria_id'] ?: null,
                     'status' => 'activo',
                 ];
 

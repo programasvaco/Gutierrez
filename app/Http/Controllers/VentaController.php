@@ -55,21 +55,34 @@ class VentaController extends Controller
 
     /**
      * AJAX: devuelve productos con existencia en el almacén solicitado.
+     * Si se pasa ?q= filtra por código o descripción (para Select2).
      */
-    public function productosAlmacen(Almacen $almacen)
+    public function productosAlmacen(Almacen $almacen, Request $request)
     {
-        $productos = Inventario::with('producto')
+        $q = $request->input('q', '');
+
+        $query = Inventario::with('producto')
             ->where('almacen_id', $almacen->id)
-            ->where('existencia', '>', 0)
-            ->get()
-            ->map(fn($inv) => [
-                'id'          => $inv->producto->id,
-                'codigo'      => $inv->producto->codigo,
-                'descripcion' => $inv->producto->descripcion,
-                'unidad'      => $inv->producto->unidad,
-                'precio_venta'=> (float) $inv->producto->precio_venta,
-                'existencia'  => (float) $inv->existencia,
-            ]);
+            ->where('existencia', '>', 0);
+
+        if ($q) {
+            $query->whereHas('producto', function ($sub) use ($q) {
+                $sub->where('codigo', 'like', "%{$q}%")
+                    ->orWhere('descripcion', 'like', "%{$q}%");
+            });
+        }
+
+        $productos = $query->limit(30)->get()->map(fn($inv) => [
+            'id'          => $inv->producto->id,
+            'text'        => $inv->producto->codigo . ' — ' . $inv->producto->descripcion . ' (' . $inv->producto->unidad . ')',
+            'precio_venta'=> (float) $inv->producto->precio_venta,
+            'existencia'  => (float) $inv->existencia,
+        ]);
+
+        // Select2 espera { results: [...] } cuando se usa AJAX
+        if ($q) {
+            return response()->json(['results' => $productos]);
+        }
 
         return response()->json($productos);
     }

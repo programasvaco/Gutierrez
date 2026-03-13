@@ -17,6 +17,7 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\CxPagarController;
 use App\Http\Controllers\InventarioImportController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\VentaTicketController;
 use App\Http\Controllers\ProveedorImportController;
 use App\Http\Controllers\FlujoCajaController;
 use App\Http\Controllers\CxCobrarController;
@@ -44,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Catálogos
     Route::resource('categorias', CategoriaController::class);
+    Route::get('productos/search', [ProductoController::class, 'search'])->name('productos.search');
     Route::resource('productos', ProductoController::class);
     
     // Importación de Productos
@@ -67,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Ventas
     Route::get('ventas/productos/{almacen}', [VentaController::class, 'productosAlmacen'])->name('ventas.productos-almacen');
+    Route::get('ventas/{venta}/ticket', [VentaTicketController::class, 'print'])->name('ventas.ticket');
     Route::resource('ventas', VentaController::class);
     
     // Traspasos

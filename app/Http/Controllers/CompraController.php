@@ -53,9 +53,8 @@ class CompraController extends Controller
     {
         $proveedores = Proveedor::where('status', 'activo')->orderBy('nombre')->get();
         $almacenes = Almacen::where('status', 'activo')->orderBy('nombre')->get();
-        $productos = Producto::where('status', 'activo')->orderBy('descripcion')->get();
 
-        return view('compras.create', compact('proveedores', 'almacenes', 'productos'));
+        return view('compras.create', compact('proveedores', 'almacenes'));
     }
 
     /**
